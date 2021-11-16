@@ -27,7 +27,6 @@ client.once("reconnecting", () => {
 client.once("disconnect", () => {
   console.log("Disconnect!");
 });
-
 client.on("message", async message => {
   if (message.author.bot) return;
   if (!message.content.startsWith(prefix)) return;
@@ -39,6 +38,9 @@ client.on("message", async message => {
     return;
   }else if  (message.content.startsWith(`${prefix}p`)) {
     execute(message, serverQueue);
+    return;
+  }else if (message.content.startsWith(`${prefix}reset`)){
+    resetBot(message.channel, serverQueue);
     return;
   }
   else if (message.content.startsWith(`${prefix}skip`)) {
@@ -304,11 +306,11 @@ function stop(message, serverQueue) {
     return message.channel.send("There is no song that I could stop!");
     
   
-   
-  serverQueue.songs = [];
-  serverQueue.connection.dispatcher.end();
-  serverQueue.voiceChannel.leave();
-  queue.delete(guild.id);
+  else
+    serverQueue.songs = [];
+    serverQueue.connection.dispatcher.end();
+    serverQueue.voiceChannel.leave();
+    queue.delete(guild.id);
 }
 
 function play(guild, song) {
@@ -329,6 +331,16 @@ function play(guild, song) {
     .on("error", error => console.error(error));
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
   serverQueue.textChannel.send(`Now is playing: **${song.title}**`);
+}
+function resetBot(channel, serverQueue) {
+  // send channel a message that you're resetting bot [optional]
+  channel.send('Resetting...')
+  .then(msg => client.destroy())
+  .then(() => client.login(token));
+  serverQueue.songs = [];
+  serverQueue.connection.dispatcher.end();
+  serverQueue.voiceChannel.leave();
+  queue.delete(guild.id);
 }
 
 client.login(token);
