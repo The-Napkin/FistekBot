@@ -17,7 +17,7 @@ const client = new Discord.Client();
 const queue = new Map();
 
 client.once("ready", () => {
-  console.log("Ready!");
+  console.log("Reaady!");
 });
 
 client.once("reconnecting", () => {
@@ -33,11 +33,15 @@ client.on("message", async message => {
 
   const serverQueue = queue.get(message.guild.id);
 
-  if (message.content.startsWith(`${prefix}pause`) || message.content.startsWith(`${prefix}ps`)) {
-    ps(message, serverQueue);
-    return;
-  }else if  (message.content.startsWith(`${prefix}p`)) {
+  //if (message.content.startsWith(`${prefix}pause`) || message.content.startsWith(`${prefix}ps`)) {
+    //ps(message, serverQueue);
+    //return;
+  //}else 
+  if  (message.content.startsWith(`${prefix}p`)) {
     execute(message, serverQueue);
+    return;
+  }else if  (message.content.startsWith(`${prefix}help`) || message.content.startsWith(`${prefix}h`)) {
+    help(message, serverQueue);
     return;
   }else if (message.content.startsWith(`${prefix}reset`)){
     resetBot(message.channel, serverQueue);
@@ -64,10 +68,10 @@ client.on("message", async message => {
   }else if (message.content.startsWith(`${prefix}ds`)) {
     stop(message, serverQueue);
     return;
-  } else if (message.content.startsWith(`${prefix}resume`) || message.content.startsWith(`${prefix}r`)) {
-    r(message, serverQueue);
-    return;
-  }
+  } //else if (message.content.startsWith(`${prefix}resume`) || message.content.startsWith(`${prefix}r`)) {
+    //r(message, serverQueue);
+    //return;
+  //}
   else {
     message.channel.send("You need to enter a valid command!");
   }
@@ -285,7 +289,9 @@ function queuels(message, serverQueue) {
  // message.channel.send(serverQueue.songs.length + "/n" + "<br>");//Watch out
   //message.channel.send(String(ug) + "<br>");
 }
-
+function help(message, serverQueue) {
+  message.channel.send("**FistekBot documentation** \n **!p** - Play \n **!q/!queue** - See the queue \n **!ds/!stop** - End playing music \n **!reset** - When bug occures resets the bot's cache \n **!skip/!s** - Skip to next song")
+}
 function skip(message, serverQueue) {
   if (!message.member.voice.channel)
     return message.channel.send(
@@ -316,8 +322,8 @@ function stop(message, serverQueue) {
 function play(guild, song) {
   const serverQueue = queue.get(guild.id);
   if (!song) {
-
-    serverQueue.voiceChannel.leave();
+    setTimeout(() => {  serverQueue.voiceChannel.leave();}, 1800000);
+   // serverQueue.voiceChannel.leave();
     queue.delete(guild.id);
     return;
   }
@@ -335,12 +341,9 @@ function play(guild, song) {
 function resetBot(channel, serverQueue) {
   // send channel a message that you're resetting bot [optional]
   channel.send('Resetting...')
-  .then(msg => client.destroy())
-  .then(() => client.login(token));
-  serverQueue.songs = [];
-  serverQueue.connection.dispatcher.end();
-  serverQueue.voiceChannel.leave();
-  queue.delete(guild.id);
+  setTimeout(() => { process.exit();}, 10000);
+  
+  //setTimeout(() => {  process.exit()}, 10000);
 }
 
 client.login(token);
