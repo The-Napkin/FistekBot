@@ -159,19 +159,12 @@ async function execute(message, serverQueue) {
   serverQueue.songs.push(song);
   return message.channel.send(`${song.title} has been added to the queue!\n` +`${song.pic}`);
 }
-  //);}
-  //const songInfo = await ytdl.getInfo(args[1,2,3,4,5,6,7,8,9]);
-  //console.log(args[1]);
-  //search(args[1],opts, async function(results){console.log(results);});
-  //console.log(results);
-  //var songInfs = await ytdl.getInfo(results);
-  //console.log(songInfs.videoDetails.video_url);
 
     
 }
-function ps(message, serverQueue){
+function ps(message, serverQueue){ //Pause Command edit this stuff so it works like a charm.
   serverQueue.connection.dispatcher.pause();console.log(serverQueue.connection.dispatcher.paused + "1");
-  setTimeout(() => serverQueue.connection.dispatcher.unpause(), 5_000);;console.log(serverQueue.connection.dispatcher.paused + "2");
+  setTimeout(() => serverQueue.connection.dispatcher.unpause(), 5_000);console.log(serverQueue.connection.dispatcher.paused + "2");
 
 }
 function r(message, serverQueue){
@@ -324,7 +317,7 @@ function stop(message, serverQueue) {
 function play(guild, song) {
   const serverQueue = queue.get(guild.id);
   if (!song) {
-    setTimeout(() => {  serverQueue.voiceChannel.leave();queue.delete(guild.id);return;}, 1800000); //removed commented code from bellow and added it into this timed function
+    setTimeout(() => {  serverQueue.voiceChannel.leave();queue.delete(guild.id);return;}, 600000); //removed commented code from bellow and added it into this timed function
    // serverQueue.voiceChannel.leave();
     //queue.delete(guild.id);
     //return;
