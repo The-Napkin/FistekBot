@@ -98,6 +98,7 @@ async function execute(message, serverQueue) {
     var song = {
         title: songInfo.videoDetails.title,
         url: songInfo.videoDetails.video_url + "&",
+        pic: songInfo.videoDetails.thumbnail,
    }
     }catch{
     arraycons = message.content.split("!p ");
@@ -127,6 +128,7 @@ async function execute(message, serverQueue) {
     var song = { 
          title: songInfs.videoDetails.title,
          url: songInfs.videoDetails.video_url,
+         pic: songInfs.videoDetails.thumbnail,
    }
   }
    if (!serverQueue) {
@@ -155,7 +157,7 @@ async function execute(message, serverQueue) {
   }
 } else {
   serverQueue.songs.push(song);
-  return message.channel.send(`${song.title} has been added to the queue!`);
+  return message.channel.send(`${song.title} has been added to the queue!\n` +`${song.pic}`);
 }
   //);}
   //const songInfo = await ytdl.getInfo(args[1,2,3,4,5,6,7,8,9]);
@@ -322,10 +324,11 @@ function stop(message, serverQueue) {
 function play(guild, song) {
   const serverQueue = queue.get(guild.id);
   if (!song) {
-    setTimeout(() => {  serverQueue.voiceChannel.leave();}, 1800000);
+    setTimeout(() => {  serverQueue.voiceChannel.leave();queue.delete(guild.id);return;}, 1800000); //removed commented code from bellow and added it into this timed function
    // serverQueue.voiceChannel.leave();
-    queue.delete(guild.id);
-    return;
+    //queue.delete(guild.id);
+    //return;
+    
   }
 
   const dispatcher = serverQueue.connection
@@ -341,9 +344,8 @@ function play(guild, song) {
 function resetBot(channel, serverQueue) {
   // send channel a message that you're resetting bot [optional]
   channel.send('Resetting...')
-  setTimeout(() => { process.exit();}, 10000);
+  setTimeout(() => { process.exit();}, 10000);//end this function, restart is handled by papa.py code
   
-  //setTimeout(() => {  process.exit()}, 10000);
 }
 
 client.login(token);
