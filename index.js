@@ -43,6 +43,10 @@ client.on("message", async message => {
   }else if  (message.content.startsWith(`${prefix}help`) || message.content.startsWith(`${prefix}h`)) {
     help(message, serverQueue);
     return;
+    //POP command to pop out a song from queue"
+  //}else if  (message.content.startsWith(`${prefix}help`) || message.content.startsWith(`${prefix}h`)) {
+    //help(message, serverQueue);
+    //return;
   }else if (message.content.startsWith(`${prefix}reset`)){
     resetBot(message.channel, serverQueue);
     return;
@@ -68,7 +72,11 @@ client.on("message", async message => {
   }else if (message.content.startsWith(`${prefix}ds`)) {
     stop(message, serverQueue);
     return;
-  } //else if (message.content.startsWith(`${prefix}resume`) || message.content.startsWith(`${prefix}r`)) {
+  }
+else if (message.content.startsWith(`${prefix}ds`)) {
+  stop(message, serverQueue);
+  return;
+} //else if (message.content.startsWith(`${prefix}resume`) || message.content.startsWith(`${prefix}r`)) {
     //r(message, serverQueue);
     //return;
   //}
@@ -79,6 +87,10 @@ client.on("message", async message => {
 
 async function execute(message, serverQueue) {
   const args = message.content.split("!p ");
+  if (args.length <= 0){
+    console.log(args.length)
+    console.log("accpeted")
+  }
 
   const voiceChannel = message.member.voice.channel;
   if (!voiceChannel)
@@ -303,11 +315,11 @@ function stop(message, serverQueue) {
       "You have to be in a voice channel to stop the music!"
     );
     
-  if (!serverQueue)
-    return message.channel.send("There is no song that I could stop!");
+ // if (!serverQueue)
+  //  return message.channel.send("There is no song that I could stop!");
     
   
-  else
+  //else
     serverQueue.songs = [];
     serverQueue.connection.dispatcher.end();
     serverQueue.voiceChannel.leave();
