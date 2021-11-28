@@ -5,6 +5,9 @@
 # !ds/!stop disconnect
 # !s/!skip skip
 # !queue viewqueue
+# !volume/!v <value> changes volume
+# !pop <songs posiotion in queue> removes specific song from queue
+# !resume/r/pause/ps resumes/pauses music
 # !reset reset bot (nessecity to have it started through python script)
 # !fuckyou let me suprise you.
 # For assitance or help dm Sag_Madig#6394 or https://github.com/The-Napkin
