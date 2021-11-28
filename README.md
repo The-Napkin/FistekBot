@@ -1,4 +1,4 @@
-# FistekBot is under MIT license and can be used only with written consent of the owner, me. Please respect, that the bot was created by me.
+# FistekBot is under MPL-2 license, so check the LICENSE file to learn more about further use.
 # Disclaimer: Edit it, so it works, if you dont know how, contact me on the contact given bellow
 # Commands:
 # !p <url/search-term>
