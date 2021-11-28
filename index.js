@@ -33,20 +33,13 @@ client.on("message", async message => {
 
   const serverQueue = queue.get(message.guild.id);
 
-  //if (message.content.startsWith(`${prefix}pause`) || message.content.startsWith(`${prefix}ps`)) {
-    //ps(message, serverQueue);
-    //return;
-  //}else 
-  if  (message.content.startsWith(`${prefix}p`)) {
+
+  if  (message.content.startsWith(`${prefix}p `)) {
     execute(message, serverQueue);
     return;
   }else if  (message.content.startsWith(`${prefix}help`) || message.content.startsWith(`${prefix}h`)) {
     help(message, serverQueue);
     return;
-    //POP command to pop out a song from queue"
-  //}else if  (message.content.startsWith(`${prefix}help`) || message.content.startsWith(`${prefix}h`)) {
-    //help(message, serverQueue);
-    //return;
   }else if (message.content.startsWith(`${prefix}reset`)){
     resetBot(message.channel, serverQueue);
     return;
@@ -66,20 +59,26 @@ client.on("message", async message => {
     skip(message, serverQueue);
     return;
   }
+  else if (message.content.startsWith(`${prefix}pause`) || message.content.startsWith(`${prefix}pss`)) {
+    ps(message, serverQueue);
+    return;
+  }
   else if (message.content.startsWith(`${prefix}stop`)) {
     stop(message, serverQueue);
     return;
-  }else if (message.content.startsWith(`${prefix}ds`)) {
+  }else if (message.content.startsWith(`${prefix}ds`) ||message.content.startsWith(`${prefix}disconnect`)) {
     stop(message, serverQueue);
     return;
-  }
-else if (message.content.startsWith(`${prefix}ds`)) {
-  stop(message, serverQueue);
+  } else if (message.content.startsWith(`${prefix}resume`) || message.content.startsWith(`${prefix}r`)) {
+    r(message, serverQueue);
+    return;
+  } else if (message.content.startsWith(`${prefix}volume`) || message.content.startsWith(`${prefix}v`)) {
+    v(message, serverQueue);
+    return;
+  }else if (message.content.startsWith(`${prefix}pop `)) {
+  pop(message, serverQueue);
   return;
-} //else if (message.content.startsWith(`${prefix}resume`) || message.content.startsWith(`${prefix}r`)) {
-    //r(message, serverQueue);
-    //return;
-  //}
+  }
   else {
     message.channel.send("You need to enter a valid command!");
   }
@@ -87,9 +86,8 @@ else if (message.content.startsWith(`${prefix}ds`)) {
 
 async function execute(message, serverQueue) {
   const args = message.content.split("!p ");
-  if (args.length <= 0){
-    console.log(args.length)
-    console.log("accpeted")
+  if (args[1] == null){
+    return;
   }
 
   const voiceChannel = message.member.voice.channel;
@@ -105,7 +103,6 @@ async function execute(message, serverQueue) {
   }
 
   try{
-    //console.log(args[1]);
     const songInfo = await ytdl.getInfo(args[1]); 
     var song = {
         title: songInfo.videoDetails.title,
@@ -115,33 +112,17 @@ async function execute(message, serverQueue) {
     }catch{
     arraycons = message.content.split("!p ");
     arr = arraycons.toString().replace(",", "").split(" ");
-    //search(arraycons, opts, async function(err, result){
+    
     console.log(arr.join("-"));
     const videos = await yt.search(arr.join("-"));
-    //console.log(videos);
     var songInfs = await ytdl.getInfo(videos[0].url);
-    //console.log(err)
-    //console.log(result[0].link);
-    //console,console.log("a");
-   // console.log(result.link)
-   // console.log("e")
-   // var objResults = JSON.parse(result);
-   // console.log(objResults);
-    //var url = `https://www.youtube.com/watch?v=${result.id.videoId}`;
-   // var arr = arraycons.toString().replace(",", "");
-    //const video = await yts( { videoId: '_4Vt0UGwmgQ' } )
-    //console.log( video.title + ` (${ video.video_url })` )
 
-
-  // console.log(result);
-    //var strr = result.toString()
-   // var uf = strr.get("link:")
-    //console.log(url)
     var song = { 
          title: songInfs.videoDetails.title,
          url: songInfs.videoDetails.video_url,
-         pic: songInfs.videoDetails.thumbnail,
+         pic: songInfs.videoDetails.thumbnails,
    }
+  
   }
    if (!serverQueue) {
     const queueContruct = {
@@ -149,7 +130,7 @@ async function execute(message, serverQueue) {
       voiceChannel: voiceChannel,
       connection: null,
       songs: [],
-      volume: 5,
+      volume: 10,
       playing: true
     };
 
@@ -169,29 +150,97 @@ async function execute(message, serverQueue) {
   }
 } else {
   serverQueue.songs.push(song);
-  return message.channel.send(`${song.title} has been added to the queue!\n` +`${song.pic}`);
+  return message.channel.send(`${song.title} has been added to the queue!`);
 }
 
     
 }
-function ps(message, serverQueue){ //Pause Command edit this stuff so it works like a charm.
-  serverQueue.connection.dispatcher.pause();console.log(serverQueue.connection.dispatcher.paused + "1");
-  setTimeout(() => serverQueue.connection.dispatcher.unpause(), 5_000);console.log(serverQueue.connection.dispatcher.paused + "2");
+function ps(message, serverQueue){
+  serverQueue.connection.dispatcher.pause();
+  message.channel.send("Music has been paused!");
 
 }
 function r(message, serverQueue){
-  console.log(serverQueue.connection.dispatcher.paused + "3");
   serverQueue.connection.dispatcher.resume();
-  serverQueue.connection.dispatcher.play();
-  console.log(serverQueue.connection.dispatcher.paused + "4");
-  //serverQueue.connection.dispatcher.setVolumeLogarithmic(10)
+  message.channel.send("Music has been resumed!");
 
 }
-//Add uf level, basically an count of blocks called uflevel and message 
+
+function v(message, serverQueue){
+  
+  if(serverQueue){
+    if (!message.member.voice.channel){
+      message.channel.send("You have to be in voice channel!")
+    }
+    if(message.content.includes("!volume")){
+      arraycons = message.content.split("!volume ");
+      if(arraycons[1] == null){
+        message.channel.send("Current music volume is: " + serverQueue.connection.dispatcher.volume*100);return;
+      }
+      if(arraycons[1] >= 1 && arraycons[1] <=100){
+        serverQueue.connection.dispatcher.setVolume(arraycons[1]/100)
+      message.channel.send("Volume chaned to: " + arraycons[1]);
+      
+    }
+    else{
+      message.channel.send("Volume has to be a number value.")
+      return;
+    }
+    return;
+    }
+    if(message.content.includes("!v")){
+      arraycons = message.content.split("!v ");
+      if(arraycons[1] == null){
+        message.channel.send("Current music volume is: " + serverQueue.connection.dispatcher.volume*100);return;
+      }
+      if(arraycons[1] >= 1 && arraycons[1] <=100){
+        serverQueue.connection.dispatcher.setVolume(arraycons[1]/100)
+      message.channel.send("Volume changed to: " + arraycons[1]);
+      
+    }
+    else{
+      message.channel.send("Volume has to be a numeric value.")
+      return;
+    }
+    return;
+    }
+    
+  }
+  else{
+  message.channel.send("There is no music playing!");return;
+}}
+
+function pop(message, serverQueue){
+  arraycons = message.content.split("!pop ");
+  if (!message.member.voice.channel){
+    message.channel.send("You have to be in voice channel!")
+  }
+  if(!serverQueue){
+    message.channel.send("There is nothing to pop.")
+  }
+  else if(arraycons[1] >= 2 && arraycons[1] <= 10){
+  var ars = arraycons[1]-=1;
+  if ((arraycons[1]+2)>serverQueue.songs.length){
+    message.channel.send("Number has to be lower or equal to " + serverQueue.songs.length);
+  }
+  else{
+  serverQueue.songs.splice(ars);
+  message.channel.send("You have popped number " + (arraycons[1]+=1) + " from the queue.");
+  }
+  }
+  //else if(arraycons[1]>serverQueue.songs.length){
+  //  message.channel.send("Number has to be lower than " + serverQueue.songs.length);
+  //}
+  else if(arraycons[1] == 1){
+    message.channel.send("You cannot pop currently playing song.");
+  } 
+  else{
+    console.log("UHH")
+  }
+
+}
 
 function queuels(message, serverQueue) {
-  //var countminten = serverQueue.songs.length;
- // var counts = countminten - 10;
   if (!message.member.voice.channel)
     return message.channel.send(
       "You have to be in a voice channel to view the queue!"
@@ -279,33 +328,18 @@ function queuels(message, serverQueue) {
     let parazit = serverQueue.songs.length - 10;
     message.channel.send(ale + "\n" + ales + "\n" + aless + "\n" + alesss + "\n" + alessss + "\n" + alesssss + "\n" + alessssss + "\n" + alesssssss + "\n" + alessssssss + "\n" +alesssssssss + "\n" + "*And " + parazit + " more song/s*");
   }
-
- // var ale = serverQueue.songs[0].title;
- // var ug = JSON.stringify(ale);
- // const json = JSON.parse(ug);
- // var x = json.title;
-  //console.log(ale);
- // var uh = ug.replace('[{"title":"', ' ');
-  //var ut = uh.replace('"url":"', ' ');
-  //var un = ut.replace('"{"title":"', ' ');
- // var up = un.replace('"}]', ' ');
- // var trt = up.replace('"url":"', ' ');
- // var srd = trt.replace(",{", "")
- // var prd = trt.split("", trt)
- // console.log(trt)
- // message.channel.send(serverQueue.songs.length + "/n" + "<br>");//Watch out
-  //message.channel.send(String(ug) + "<br>");
 }
 function help(message, serverQueue) {
-  message.channel.send("**FistekBot documentation** \n **!p** - Play \n **!q/!queue** - See the queue \n **!ds/!stop** - End playing music \n **!reset** - When bug occures resets the bot's cache \n **!skip/!s** - Skip to next song")
+  message.channel.send("**FistekBot documentation** \n **!p** - Play \n **!q/!queue** - See the queue \n **!stop** - Stops music and clears the queue \n **!reset** - When bug occures resets the bot's cache \n **!skip/!s** - Skip to next song \n **!ds/!disconnect** - Disconnects bot \n **!pause/resume** - Pauses/Resumes the music \n **!volume/!v [value]** - Changes volume \n **!pop [song number in queue]** - Removes specific song from queue")
 }
 function skip(message, serverQueue) {
-  if (!message.member.voice.channel)
+  if (!message.member.voice.channel){
     return message.channel.send(
       "You have to be in a voice channel to skip the music!"
-    );
-  if (!serverQueue)
+    );}
+  if (!serverQueue){
     return message.channel.send("There is no song that I could skip!");
+  }
   serverQueue.connection.dispatcher.end();
 }
 
@@ -314,12 +348,7 @@ function stop(message, serverQueue) {
     return message.channel.send(
       "You have to be in a voice channel to stop the music!"
     );
-    
- // if (!serverQueue)
-  //  return message.channel.send("There is no song that I could stop!");
-    
-  
-  //else
+
     serverQueue.songs = [];
     serverQueue.connection.dispatcher.end();
     serverQueue.voiceChannel.leave();
@@ -329,27 +358,32 @@ function stop(message, serverQueue) {
 function play(guild, song) {
   const serverQueue = queue.get(guild.id);
   if (!song) {
-    setTimeout(() => {  serverQueue.voiceChannel.leave();queue.delete(guild.id);return;}, 600000); //removed commented code from bellow and added it into this timed function
-   // serverQueue.voiceChannel.leave();
-    //queue.delete(guild.id);
-    //return;
-    
+    setTimeout(() => {  serverQueue.voiceChannel.leave();queue.delete(guild.id);return;}, 6000000);// edit the number for how long should bot idle
   }
-
+try{
   const dispatcher = serverQueue.connection
-    .play(ytdl(song.url, { filter: 'audioonly', quality: 'lowestaudio' }))
+  
+    .play(ytdl(song.url, {quality: 'highestaudio', highWaterMark: 1 << 25}))
+  
     .on("finish", () => {
       serverQueue.songs.shift();
       play(guild, serverQueue.songs[0]);
     })
     .on("error", error => console.error(error));
-  dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-  serverQueue.textChannel.send(`Now is playing: **${song.title}**`);
+    serverQueue.connection.dispatcher.setVolume(serverQueue.volume/100);
+    serverQueue.textChannel.send(`Now is playing: **${song.title}**`);
+}
+catch{
+  serverQueue.songs = [];
+  queue.delete(guild.id);
+  console.log("Caught weird stuff" + serverQueue.songs)
+}
+  
 }
 function resetBot(channel, serverQueue) {
   // send channel a message that you're resetting bot [optional]
   channel.send('Resetting...')
-  setTimeout(() => { process.exit();}, 10000);//end this function, restart is handled by papa.py code
+  setTimeout(() => { process.exit();}, 5);//end this function, restart is handled by papa.py code
   
 }
 
