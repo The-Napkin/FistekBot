@@ -10,4 +10,5 @@
 # !resume/r/pause/ps resumes/pauses music
 # !reset reset bot (nessecity to have it started through python script)
 # !fuckyou let me suprise you.
+# Installation in Install.md 
 # For assitance or help dm Sag_Madig#6394 or https://github.com/The-Napkin
