@@ -7,7 +7,7 @@ npm install discord.js@^12.5.3 ffmpeg fluent-ffmpeg @discordjs/opus ytdl-core --
 npm install youtube-search-without-api-key
 npm install opusscript
 npm install node-opus
-edit your config.json file under token paste your discord bot token from discord.com/developers and edit your guild id to your server
+edit your config.json file under token paste your discord bot token from discord.com/developers 
 download https://www.gyan.dev/ffmpeg/builds/ and paste near your index.js
 change your path in papa.py python file to path where you have index.js
 node index.js
@@ -24,7 +24,7 @@ sudo npm install discord.js@^12.5.3 ffmpeg fluent-ffmpeg @discordjs/opus ytdl-co
 npm install youtube-search-without-api-key
 sudo npm install opusscript
 sudo npm install node-opus
-sudo nano config.json (edit your guild id, edit your token to your bot token, discord.com/developers)
+sudo nano config.json ( edit your token to your bot token, discord.com/developers)
 sudo nano papa.py (change to your bot directory)
 sudo node index.js
 //Bot should be working now

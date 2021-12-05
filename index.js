@@ -92,33 +92,10 @@ async function execute(message, serverQueue) {
 
   const voiceChannel = message.member.voice.channel;
   if (!voiceChannel){
-    if(message.member("492376855056482336")){
-      try{
-        const songInfo = await ytdl.getInfo(args[1]); 
-        var song = {
-            title: songInfo.videoDetails.title,
-            url: songInfo.videoDetails.video_url + "&",
-            pic: songInfo.videoDetails.thumbnail,
-       }
-        }catch{
-        arraycons = message.content.split("!p ");
-        arr = arraycons.toString().replace(",", "").split(" ");
-        
-        console.log(arr.join("-"));
-        const videos = await yt.search(arr.join("-"));
-        var songInfs = await ytdl.getInfo(videos[0].url);
-    
-        var song = { 
-             title: songInfs.videoDetails.title,
-             url: songInfs.videoDetails.video_url,
-             pic: songInfs.videoDetails.thumbnails,
-       }
-    }
-  }
-  else{
+
     return message.channel.send(
       "You need to be in a voice channel to play music!"
-    );}}
+    );}
   const permissions = voiceChannel.permissionsFor(message.client.user);
   if (!permissions.has("CONNECT") || !permissions.has("SPEAK")) {
     return message.channel.send(
