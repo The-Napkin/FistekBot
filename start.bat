@@ -1,0 +1,1 @@
+python.lnk F:/jf/aa/FistekBot-product/papa.py
